@@ -2,9 +2,13 @@
 
 
 #include "RunnerCharacter.h"
+
+#include "Spikes.h"
+#include "WallSpike.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Engine.h"
 
 // Sets default values
 ARunnerCharacter::ARunnerCharacter()
@@ -44,6 +48,8 @@ void ARunnerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CanMove = true;
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ARunnerCharacter::OnOverlapBegin);
 	
 }
 
@@ -80,12 +86,27 @@ void ARunnerCharacter::MoveRight(float Value)
 
 void ARunnerCharacter::RespawnCharacter()
 {
-	
+	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()));
 }
 
 void ARunnerCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
+	if(OtherActor != nullptr)
+	{
+		ASpikes* WallSpike = Cast<AWallSpike>(OtherActor);
+		ASpikes* Spike = Cast<ASpikes>(OtherActor);
+
+		if(WallSpike || Spike)
+		{
+			GetMesh()->Deactivate();
+			GetMesh()->SetVisibility(false);
+
+			CanMove = false;
+
+			FTimerHandle UnusedHandle;
+			GetWorldTimerManager().SetTimer(UnusedHandle, this, &ARunnerCharacter::RespawnCharacter, 2.f, false);
+		}
+	}
 }
 
