@@ -21,6 +21,21 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	FVector2D TouchStartLocation;
+	FVector LastSwipeWorldPos;
+	float SwipeMinDistance = 50.0f;
+	float SwipeMaxDistance = 200.0f;
+	float SwipeImpulseStrength = 2.0f;
+
+	UFUNCTION()
+	void OnTouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
+
+	UFUNCTION()
+	void OnTouchEnded(ETouchIndex::Type FingerIndex, FVector Location);
+
+	UFUNCTION()
+	void OnTouchMoved(ETouchIndex::Type FingerIndex, FVector Location);
 
 public:	
 	// Called every frame

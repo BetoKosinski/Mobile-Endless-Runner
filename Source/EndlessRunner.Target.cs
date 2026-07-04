@@ -1,15 +1,16 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
-using System.Collections.Generic;
 
 public class EndlessRunnerTarget : TargetRules
 {
-	public EndlessRunnerTarget(TargetInfo Target) : base(Target)
+	public EndlessRunnerTarget(TargetInfo target) : base(target)
 	{
 		Type = TargetType.Game;
-		DefaultBuildSettings = BuildSettingsVersion.V2;
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
+		DefaultBuildSettings = BuildSettingsVersion.V6;
+		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;
+		CppStandard = CppStandardVersion.Cpp20;
+
 		ExtraModuleNames.Add("EndlessRunner");
 	}
 }

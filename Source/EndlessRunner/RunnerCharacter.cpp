@@ -53,6 +53,53 @@ void ARunnerCharacter::BeginPlay()
 	
 }
 
+void ARunnerCharacter::OnTouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
+{
+	TouchStartLocation = FVector2D(Location.X, Location.Y);
+}
+
+void ARunnerCharacter::OnTouchEnded(ETouchIndex::Type FingerIndex, FVector Location)
+{
+	if (!CanMove) return;
+
+	FVector2D TouchEndLocation = FVector2D(Location.X, Location.Y);
+	FVector2D SwipeDelta = TouchEndLocation - TouchStartLocation;
+	
+	if (SwipeDelta.Size() < SwipeMinDistance) return;
+	
+	float SwipeLength = FMath::Min(SwipeDelta.Size(), SwipeMaxDistance);
+	FVector2D SwipeNormalized = SwipeDelta.GetSafeNormal();
+	FVector2D SwipeClamped = SwipeNormalized * SwipeLength;
+	
+	float SwipeRatio = SwipeLength / SwipeMaxDistance;	
+	float ImpulseY = SwipeClamped.X;   
+	float ImpulseZ = -SwipeClamped.Y; 
+	
+	if (ImpulseY < 0.0f) ImpulseY = 0.0f;
+
+	FVector Impulse = FVector(0.0f, ImpulseY, ImpulseZ) * SwipeImpulseStrength * SwipeRatio;
+
+	if (!Impulse.IsZero())
+	{
+		GetCharacterMovement()->AddImpulse(Impulse, true);
+	}
+}
+
+void ARunnerCharacter::OnTouchMoved(ETouchIndex::Type FingerIndex, FVector Location)
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	
+	if (!PC) return;
+
+	FVector WorldLocation, WorldDirection;
+	PC->DeprojectScreenPositionToWorld(Location.X, Location.Y, WorldLocation, WorldDirection);
+
+	FVector SpawnPos = WorldLocation + WorldDirection * 500.0f;
+
+	DrawDebugLine(GetWorld(), LastSwipeWorldPos, SpawnPos, FColor::Red, false, 1.0f, 0, 2.0f);
+	LastSwipeWorldPos = SpawnPos;
+}
+
 // Called every frame
 void ARunnerCharacter::Tick(float DeltaTime)
 {
@@ -61,7 +108,8 @@ void ARunnerCharacter::Tick(float DeltaTime)
 	tempPos = GetActorLocation();
 	tempPos.X -= 850.0f;
 	tempPos.Z = zPosition;
-	SideViewCamera->SetWorldLocation(tempPos);		
+	SideViewCamera->SetWorldLocation(tempPos);
+	MoveRight(1.0f);
 
 }
 
@@ -72,8 +120,10 @@ void ARunnerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ARunnerCharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ARunnerCharacter::StopJumping);
+	PlayerInputComponent->BindTouch(IE_Pressed, this, &ARunnerCharacter::OnTouchStarted);
+	PlayerInputComponent->BindTouch(IE_Released, this, &ARunnerCharacter::OnTouchEnded);
+	PlayerInputComponent->BindTouch(IE_Repeat, this, &ARunnerCharacter::OnTouchMoved);
 	
-	PlayerInputComponent->BindAxis("MoveRight", this, &ARunnerCharacter::MoveRight);
 }
 
 void ARunnerCharacter::MoveRight(float Value)
