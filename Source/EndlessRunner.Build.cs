@@ -9,6 +9,6 @@ public class EndlessRunner : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] { "ModelViewViewModel", "ModelViewViewModel" });
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "SlateCore", "InputCore", "HeadMountedDisplay", "EnhancedInput" });
 	}
 }

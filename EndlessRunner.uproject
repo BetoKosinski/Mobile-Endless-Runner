@@ -10,7 +10,9 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"ModelViewViewModel"
+				"ModelViewViewModel",
+				"UMG",
+				"CommonUI"
 			]
 		}
 	],
@@ -24,6 +26,10 @@
 		},
 		{
 			"Name": "ModelViewViewModel",
+			"Enabled": true
+		},
+		{
+			"Name": "CommonUI",
 			"Enabled": true
 		}
 	]

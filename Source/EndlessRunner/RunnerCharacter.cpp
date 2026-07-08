@@ -81,7 +81,10 @@ void ARunnerCharacter::OnTouchEnded(ETouchIndex::Type FingerIndex, FVector Locat
 
 	if (!Impulse.IsZero())
 	{
-		GetCharacterMovement()->AddImpulse(Impulse, true);
+		FVector CurrentVel = GetCharacterMovement()->Velocity;
+		GetCharacterMovement()->Velocity = FVector(CurrentVel.X, CurrentVel.Y, 0.0f);
+		
+		LaunchCharacter(Impulse, false, true);
 	}
 }
 
