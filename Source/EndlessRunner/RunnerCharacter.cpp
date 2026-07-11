@@ -140,8 +140,9 @@ void ARunnerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	tempPos = GetActorLocation();
-	tempPos.X -= 850.0f;
-	tempPos.Z = zPosition;
+	tempPos.X -= 1000.0f;
+	tempPos.Y += 500.0f;
+	tempPos.Z = zPosition;	
 	SideViewCamera->SetWorldLocation(tempPos);
 	MoveRight(1.0f);
 

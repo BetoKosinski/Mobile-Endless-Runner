@@ -33,9 +33,9 @@ protected:
 	FVector LastSwipeWorldPos;
 	float SwipeMinDistance = 50.0f;
 	float SwipeMaxDistance = 200.0f;
-	float SwipeImpulseStrength = 2.0f;
-	float JumpStaminaCost = 20.0f;
-	float SwipeStaminaCost = 30.0f;
+	float SwipeImpulseStrength = 5.0f;
+	float JumpStaminaCost = 10.0f;
+	float SwipeStaminaCost = 20.0f;
 
 	UFUNCTION()
 	void OnTouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
