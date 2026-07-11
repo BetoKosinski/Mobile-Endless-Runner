@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "VM_Stamina.h"
 #include "RunnerCharacter.generated.h"
 
 UCLASS()
@@ -18,6 +19,12 @@ public:
 	// Sets default values for this character's properties
 	ARunnerCharacter();
 
+	UPROPERTY(BlueprintReadOnly, Category = "Stamina")
+	TObjectPtr<UVM_Stamina> StaminaViewModel;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> StaminaWidgetClass;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -27,6 +34,8 @@ protected:
 	float SwipeMinDistance = 50.0f;
 	float SwipeMaxDistance = 200.0f;
 	float SwipeImpulseStrength = 2.0f;
+	float JumpStaminaCost = 20.0f;
+	float SwipeStaminaCost = 30.0f;
 
 	UFUNCTION()
 	void OnTouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
@@ -47,6 +56,7 @@ public:
 protected:
 
 	void MoveRight(float Value);
+	virtual void Jump() override;
 
 public:
 
@@ -64,7 +74,9 @@ private:
 
 	float zPosition;
 	FVector tempPos = FVector();
-
+	
 	bool CanMove;
+
+	TObjectPtr<UUserWidget> StaminaWidgetInstance;
 
 };

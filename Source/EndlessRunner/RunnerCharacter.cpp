@@ -3,6 +3,10 @@
 
 #include "RunnerCharacter.h"
 
+#include "VM_Stamina.h"
+#include "View/MVVMView.h"
+#include "Blueprint/UserWidget.h"
+#include "MVVMSubsystem.h"
 #include "Spikes.h"
 #include "WallSpike.h"
 #include "Components/CapsuleComponent.h"
@@ -50,7 +54,30 @@ void ARunnerCharacter::BeginPlay()
 	CanMove = true;
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ARunnerCharacter::OnOverlapBegin);
-	
+
+	StaminaViewModel = NewObject<UVM_Stamina>(this);
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+
+	if (!PC)
+	{
+		PC = GetWorld()->GetFirstPlayerController();
+	}
+
+	if (StaminaWidgetClass && PC)
+	{
+		StaminaWidgetInstance = CreateWidget<UUserWidget>(PC, StaminaWidgetClass);
+
+		if (StaminaWidgetClass)
+		{
+			StaminaWidgetInstance->AddToViewport();
+
+			if (UMVVMView* MVVMView = StaminaWidgetInstance->GetExtension<UMVVMView>())
+			{
+				MVVMView->SetViewModel(FName("VM_Stamina"), StaminaViewModel);
+			}	
+		}
+	}	
 }
 
 void ARunnerCharacter::OnTouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -83,8 +110,12 @@ void ARunnerCharacter::OnTouchEnded(ETouchIndex::Type FingerIndex, FVector Locat
 	{
 		FVector CurrentVel = GetCharacterMovement()->Velocity;
 		GetCharacterMovement()->Velocity = FVector(CurrentVel.X, CurrentVel.Y, 0.0f);
-		
-		LaunchCharacter(Impulse, false, true);
+
+		if (StaminaViewModel && StaminaViewModel->GetStamina() >= SwipeStaminaCost)
+		{
+			StaminaViewModel->ConsumeStamina(SwipeStaminaCost);
+			LaunchCharacter(Impulse, false, true);
+		}  				
 	}
 }
 
@@ -135,6 +166,15 @@ void ARunnerCharacter::MoveRight(float Value)
 	{
 		AddMovementInput(FVector(0.0f, 1.0f, 0.0f), Value);
 	}
+}
+
+void ARunnerCharacter::Jump()
+{
+	if (StaminaViewModel && StaminaViewModel->GetStamina() >= JumpStaminaCost)
+	{
+		Super::Jump();
+		StaminaViewModel->ConsumeStamina(JumpStaminaCost);
+	}	
 }
 
 void ARunnerCharacter::RespawnCharacter()
