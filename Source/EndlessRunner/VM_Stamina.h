@@ -37,13 +37,13 @@ private:
 	float MaxStamina = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	float RegenRate = 10.0f;
+	float RegenRate = 20.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	float RegenTickInterval = 0.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	float RegenCooldown = 2.0f;
+	float RegenCooldown = 1.0f;
 
 	FTimerHandle CooldownTimerHandle;
 	FTimerHandle RegenTimerHandle;
