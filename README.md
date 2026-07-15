@@ -1,2 +1,2 @@
 # Mobile-Endless-Runner
-A Simple mobile endless runner made in C++ for study.
+A Simple mobile endless runner made in C++.
