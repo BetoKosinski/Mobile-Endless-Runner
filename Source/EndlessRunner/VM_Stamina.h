@@ -17,39 +17,22 @@ class ENDLESSRUNNER_API UVM_Stamina : public UMVVMViewModelBase
 public:
 	UVM_Stamina();
 
-	UFUNCTION(BlueprintPure)
-	float GetStamina() const { return Stamina; } 
+	UFUNCTION(BlueprintPure, FieldNotify)
+	int32 GetStamina() const { return Stamina; }
 	
 	UFUNCTION(BlueprintCallable)
-	void SetStamina(const float &NewStamina);
-
-	UFUNCTION(BlueprintPure, FieldNotify)
-	float GetStaminaPercent() const {return Stamina / MaxStamina;}
+	void SetStamina(const int32 &NewStamina);	
 
 	UFUNCTION(BlueprintCallable)
-	void ConsumeStamina(float Amount);
+	void ConsumeStamina(int32 Amount);
+
+	UFUNCTION(BlueprintCallable)
+	void RestoreStamina(int32 Amount);
 	
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess = true))
-	float Stamina = 0.0f;
+	int32 Stamina = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	float MaxStamina = 100.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	float RegenRate = 20.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	float RegenTickInterval = 0.1f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	float RegenCooldown = 1.0f;
-
-	FTimerHandle CooldownTimerHandle;
-	FTimerHandle RegenTimerHandle;
-
-	void StartRegeneration();
-	void StopRegeneration();
-	void RegenerationTick();
-	
+	int32 MaxStamina = 5;			
 };

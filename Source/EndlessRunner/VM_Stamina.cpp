@@ -2,74 +2,37 @@
 
 
 #include "VM_Stamina.h"
-#include "TimerManager.h"
-#include "Engine/World.h"
 
 UVM_Stamina::UVM_Stamina()
 {
 	Stamina = MaxStamina;
 }
 
-void UVM_Stamina::SetStamina(const float &NewStamina)
+void UVM_Stamina::SetStamina(const int32& NewStamina)
 {
-	const float Clamped = FMath::Clamp(NewStamina, 0.0f, MaxStamina);
+	const int32 Clamped = FMath::Clamp(NewStamina, 0, MaxStamina);
 	if (UE_MVVM_SET_PROPERTY_VALUE(Stamina, Clamped))
 	{
-		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetStaminaPercent);
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetStamina);
 	}
 }
 
-void UVM_Stamina::ConsumeStamina(float Amount)
+void UVM_Stamina::ConsumeStamina(int32 Amount)
 {
-	SetStamina(Stamina - Amount);
-
-	StopRegeneration();
-
-	if (UWorld* World = GetWorld())
+	if (Stamina > 0)
 	{
-		World->GetTimerManager().ClearTimer(CooldownTimerHandle);
-		World->GetTimerManager().SetTimer(
-			CooldownTimerHandle,
-			this,
-			&UVM_Stamina::StartRegeneration,
-			RegenCooldown,
-			false
-			);
+		SetStamina(Stamina - Amount);
 	}	
 }
 
-void UVM_Stamina::StartRegeneration()
+void UVM_Stamina::RestoreStamina(int32 Amount)
 {
-	if (UWorld* World = GetWorld())
-	{		
-		World->GetTimerManager().SetTimer(
-			RegenTimerHandle,
-			this,
-			&UVM_Stamina::RegenerationTick,
-			RegenTickInterval,
-			true
-			);			
-	}
-}
-
-void UVM_Stamina::StopRegeneration()
-{
-	if (UWorld* World = GetWorld())
+	if (Stamina < MaxStamina)
 	{
-		World->GetTimerManager().ClearTimer(RegenTimerHandle);
+		SetStamina(Stamina + Amount);
 	}
 }
 
-void UVM_Stamina::RegenerationTick()
-{
-	if (Stamina >= MaxStamina)
-	{
-		SetStamina(MaxStamina);
-		StopRegeneration();
-		return;
-	}
 
-	SetStamina(Stamina + RegenRate * RegenTickInterval);
-}
 
 

@@ -68,7 +68,7 @@ void ARunnerCharacter::BeginPlay()
 	{
 		StaminaWidgetInstance = CreateWidget<UUserWidget>(PC, StaminaWidgetClass);
 
-		if (StaminaWidgetClass)
+		if (StaminaWidgetInstance)
 		{
 			StaminaWidgetInstance->AddToViewport();
 
@@ -111,9 +111,9 @@ void ARunnerCharacter::OnTouchEnded(ETouchIndex::Type FingerIndex, FVector Locat
 		FVector CurrentVel = GetCharacterMovement()->Velocity;
 		GetCharacterMovement()->Velocity = FVector(CurrentVel.X, CurrentVel.Y, 0.0f);
 
-		if (StaminaViewModel && StaminaViewModel->GetStamina() >= SwipeStaminaCost)
+		if (StaminaViewModel && StaminaViewModel->GetStamina() >= ActionStaminaCost)
 		{
-			StaminaViewModel->ConsumeStamina(SwipeStaminaCost);
+			StaminaViewModel->ConsumeStamina(ActionStaminaCost);
 			LaunchCharacter(Impulse, false, true);
 		}  				
 	}
@@ -171,10 +171,10 @@ void ARunnerCharacter::MoveRight(float Value)
 
 void ARunnerCharacter::Jump()
 {
-	if (StaminaViewModel && StaminaViewModel->GetStamina() >= JumpStaminaCost)
+	if (StaminaViewModel && StaminaViewModel->GetStamina() >= ActionStaminaCost)
 	{
 		Super::Jump();
-		StaminaViewModel->ConsumeStamina(JumpStaminaCost);
+		StaminaViewModel->ConsumeStamina(ActionStaminaCost);
 	}	
 }
 
